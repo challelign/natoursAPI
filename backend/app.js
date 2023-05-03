@@ -17,20 +17,25 @@ if (process.env.NODE_ENV === 'development') {
 
   
 
-// app.use((req, res, next) =>{
-//     req.requestTime  = new Date().toISOString()
-//     next()
-// })
+app.use((req, res, next) =>{
+    req.requestTime  = new Date().toISOString()
+    next()
+})
 
 
-app.get('/', (req, res) => {
-    // res.send({message:'Hello World!'}); or
-    res.status(200).json({ message: "Hellow world", app: "new msssa is here" });
-});
 
 
 // mouting the router
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/users', userRouter)
+
+
+// check if route not found and this code shoud be put after all the route files
+app.all('*', (req,res, next) =>{
+  res.status(404).json({
+    status:"Error",
+    message:`Can not Find ${req.originalUrl} to this route ..`
+  }) 
+})
 
 module.exports = app
