@@ -1,6 +1,6 @@
 
 const Tour = require('./../models/tourModel'); 
-const APIFeatures = require('../utils/APIFeaturs');
+const APIFeatures = require('../utils/apiFeaturs');
 
  
 // this class act as middleware 
