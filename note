@@ -1,2 +1,4 @@
 Morgan-> HTTP request logger middleware for node.js
 
+npm install --save-dev cross-env
+"prod": "cross-env NODE_ENV=production nodemon server.js",
