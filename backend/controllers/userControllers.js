@@ -7,10 +7,6 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     status: 'success',
     data: users,
   });
-  // res.status(500).json({
-  //     status:"Error",
-  //     message:"This Route is not Found"
-  // })
 });
 
 exports.getUser = (req, res) => {

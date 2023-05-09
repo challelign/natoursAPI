@@ -56,6 +56,15 @@ userSchema.pre('save', async function(next){
   this.passwordConfirm = undefined;
   next()
 })
+
+// candidatePasswoerd => req.body.password and userPassword is user.password from the database 
+// this class called in authController method of password Verify
+// this method is avilable to every userModle class
+userSchema.methods.correctPassword = async function(candidatePasswoerd, userPassword){
+
+  return await bcrypt.compare(candidatePasswoerd, userPassword);
+
+}
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
