@@ -41,6 +41,7 @@ const sendErrorProd = (err, res) => {
 
   // Log to console for dev
   console.log(err);
+  // if the err is not from the above this will excute
   
   res.status(error.statusCode || 500).json({
     success: false,
