@@ -1,6 +1,7 @@
 const { promisify } = require("util");
 const AppError = require("../utils/appError");
 const User = require("./../models/userModel");
+const sendEmail = require("../utils/email");
 const catchAsync = require("./../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 
@@ -119,5 +120,44 @@ exports.restrictTo = (...roles) => {
     }
     next();
   };
- 
 };
+
+exports.forgetPassword = catchAsync(async (req, res, next) => {
+  // 1 get user based on the given req.body.email email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+  // 2 generate random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false }); //this is built-in mongoose document 
+
+  // 3 send it to the email
+  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
+  const message = `You are receiving this email because you (or someone else) 
+  have requested the reset of a password. Please make a 
+  PUT request to: \n\n ${resetUrl}\n\n If you did not request this, please ignore this email and your password will remain unchanged.\n`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password Reset Token valid for 10 minuet",
+      message,
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: "Token sent to Email",
+    });
+
+  } catch (err) {
+    user.passwordResetToken.undefined;
+    user.passwordResetExpires.undefined;
+    await user.save({ validateBeforeSave: false }); //this is built-in mongoose document 
+    return next(new AppError("Their was an error sending the email. try again later", 500))
+
+  }
+
+});
+
+exports.resetPassword = (req, res, next) => {};
