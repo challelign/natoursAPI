@@ -70,13 +70,13 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp){
 
   if(this.changePasswordAt){
     // console.log("date Log ", this.changePasswordAt, JWTTimestamp);
-    const changedTimestamp = parseInt(
-      this.changePasswordAt.getTime() / 100,
-      10
-    );
+    // const changedTimestamp = parseInt(
+    //   this.changePasswordAt.getTime() / 100,
+    //   10
+    // );
     // console.log("date Log ", this.changedTimestamp, JWTTimestamp);
-    return JWTTimestamp < changedTimestamp;
-    // return JWTTimestamp < this.changePasswordAt;
+    // return JWTTimestamp < changedTimestamp;
+    return JWTTimestamp < this.changePasswordAt;
 
   }
   // false means NOT changed
