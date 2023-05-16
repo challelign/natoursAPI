@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const { promisify } = require("util");
 const AppError = require("../utils/appError");
 const User = require("./../models/userModel");
@@ -50,7 +51,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 2 check if the user exists and password is correct
   const user = await User.findOne({ email: email }).select("+password");
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (!user || !(await user.correctPassword(password, user.password))) { //correctPassword func from user model
     return next(new AppError("Incorrect Email Or Password ", 401));
   }
 
@@ -99,7 +100,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // 4 check if the user changed the password after the token is issued
-  if (currentUser.changedPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) { //changedPasswordAfter func from user model
     return next(
       new AppError("User recently changed password! Please log in again.", 401)
     );
@@ -129,7 +130,7 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("User not found", 404));
   }
   // 2 generate random reset token
-  const resetToken = user.createPasswordResetToken();
+  const resetToken = user.createPasswordResetToken();  //createPasswordResetToken func from user model
   await user.save({ validateBeforeSave: false }); //this is built-in mongoose document 
 
   // 3 send it to the email
@@ -160,4 +161,38 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
 
 });
 
-exports.resetPassword = (req, res, next) => {};
+exports.resetPassword = catchAsync (async(req, res, next) => {
+// 1 get user based on the token
+  const hashedToken = crypto
+  .createHash("sha256")
+  .update(req.params.token) // from the url of forgetPassword/:token
+  .digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+// 2 if the token has not expired and their is user set a new password
+  if (!user) {
+    return next(new AppError("Password reset token is invalid or has expired", 400));
+  }
+
+  // 3 update the  changedPasswordAt property of the user
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  // 4 Log the user and send JWT  id: user._id 
+  // const token = signToken( user._id);
+  const token = signToken({id: user._id} );
+  res.status(200).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  }); 
+
+});

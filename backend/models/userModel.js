@@ -88,6 +88,15 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp){
   return false;
 }
 
+// for changing the password using resetPassword 
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) {
+    return next();
+  }
+  // this helps to create date for password before 1 second token created
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
  
   userSchema.methods.createPasswordResetToken = function() {
     const resetToken = crypto.randomBytes(32).toString('hex');
