@@ -11,6 +11,18 @@ const signToken = (id) => {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -29,7 +41,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   // const {name ,email, password ,passwordConfirm } = req.body
   // const newUser = await User.create(req.body);
 
-  const token = signToken(newUser._id);
+  // before createSendToken class
+  /* const token = signToken(newUser._id);
 
   res.status(201).json({
     status: "success",
@@ -38,6 +51,8 @@ exports.signup = catchAsync(async (req, res, next) => {
       user: newUser,
     },
   });
+ */
+  createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -61,13 +76,17 @@ exports.login = catchAsync(async (req, res, next) => {
   // const token = jwt.sign({user:user}, process.env.JWT_SECRET,  { expiresIn: process.env.JWT_EXPIRES_IN })
   // const token = jwt.sign({id:user._id}, process.env.JWT_SECRET,  { expiresIn: process.env.JWT_EXPIRES_IN })
 
-  const token = signToken({ id: user._id }); // calling the signToken function
+  createSendToken(user, 200, res);
+
+  /*  const token = signToken({ id: user._id }); // calling the signToken function
 
   res.status(200).json({
     status: "success",
     token: token,
     data: user,
-  });
+  }); 
+  
+  */
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -93,7 +112,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 3 Check if user still exists
   // const currentUser = await User.findById(decoded.id);
-  const currentUser = await User.findById(decoded.id.id);
+  const currentUser = await User.findById(decoded.id);
   console.log(" curr User Id is ", currentUser);
   if (!currentUser) {
     return next(
@@ -192,6 +211,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
   // 4 Log the user and send JWT  id: user._id
   // const token = signToken( user._id);
+
+  createSendToken(user, 200, res);
+  /* 
   const token = signToken({ id: user._id });
   res.status(200).json({
     status: "success",
@@ -199,5 +221,25 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     data: {
       user,
     },
-  });
+  }); 
+  
+  */
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1 get user from the database
+  const user = await User.findById(req.user.id).select("+password"); // req,user.id comes from protect route
+
+  // 2 check if POST current password is correct
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError("Your current password is incorrect", 401));
+  }
+
+  // 3 if so update the password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  // 4 Log the user and send JWT
+  createSendToken(user, 200, res);
 });
