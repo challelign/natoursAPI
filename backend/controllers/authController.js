@@ -14,6 +14,24 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+
+  // SENDING COOKIE TO THE BROWSER
+
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    // secure: false, // this should be true in production
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = true;
+  }
+  res.cookie("jwt", token, cookieOptions);
+
+  // remove the password from the output
+  user.password = undefined;
   res.status(statusCode).json({
     status: "success",
     token,
@@ -29,7 +47,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    changePasswordAt: req.body.changePasswordAt,
+    // changePasswordAt: req.body.changePasswordAt,
   });
 
   // const token = jwt.sign({id:newUser._id}, process.env.JWT_SECRET,  { expiresIn: process.env.JWT_EXPIRES_IN })
@@ -88,6 +106,14 @@ exports.login = catchAsync(async (req, res, next) => {
   
   */
 });
+
+exports.logout = (req, res) => {
+  res.cookie("jwt", "loggedout", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: "success" });
+};
 
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it is there
