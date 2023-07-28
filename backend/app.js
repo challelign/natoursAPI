@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 
 const AppError = require("./utils/appError");
 const globalErrorController = require("./controllers/errorController");
@@ -9,6 +10,7 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 // middleware between the req and res
+app.use(cors());
 app.use(express.json());
 
 // 1) MIDDLEWARES

@@ -56,7 +56,7 @@ const tourSchema = new mongoose.Schema({
       message: "Discount price ({VALUE}) should be below regular price",
     },
   },
-
+  images: [String],
   createdAt: {
     type: Date,
     default: Date.now(),
