@@ -5,21 +5,22 @@ const authController = require("./../controllers/authController");
 const router = express.Router();
 
 router
-  .route("/top-5-cheaps")
-  .get(tourController.aliasTopTours, tourController.getAllTours);
-router
-  .route("/")
-  .get(tourController.getAllTours)
-  .post(tourController.createTour);
+	.route("/top-5-cheaps")
+	.get(tourController.aliasTopTours, tourController.getAllTours);
 
 router
-  .route("/:id")
-  .get(tourController.getTour)
-  .patch(tourController.updateTour)
-  .delete(
-    authController.protect,
-    authController.restrictTo("lead-guide", "admin"),
-    tourController.deleteTour
-  );
+	.route("/")
+	.get(tourController.getAllTours)
+	.post(tourController.createTour);
+
+router
+	.route("/:id")
+	.get(tourController.getTour)
+	.patch(tourController.updateTour)
+	.delete(
+		authController.protect,
+		authController.restrictTo("lead-guide", "admin"),
+		tourController.deleteTour
+	);
 
 module.exports = router;
