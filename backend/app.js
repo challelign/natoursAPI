@@ -7,6 +7,7 @@ const globalErrorController = require("./controllers/errorController");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
 const app = express();
 
 // middleware between the req and res
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 // mouting the router
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // check if route not found and this code shoud be put after all the route files
 app.all("*", (req, res, next) => {

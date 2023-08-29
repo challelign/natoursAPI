@@ -32,6 +32,19 @@ const reviewSchema = new mongoose.Schema(
 		toObject: { virtuals: true },
 	}
 );
+
+// QUERY MIDDLEWARE
+
+// to populate the  user and tour data that link with review
+reviewSchema.pre(/^find/, function (next) {
+	this.populate({ path: "tour", select: "name" }).populate({
+		path: "user",
+		select: "name photo email",
+	});
+
+	next();
+});
+
 const Review = mongoose.model("Review", reviewSchema);
 
 module.exports = Review;
