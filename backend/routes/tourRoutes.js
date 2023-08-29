@@ -18,8 +18,8 @@ router
 	.get(tourController.getTour)
 	.patch(tourController.updateTour)
 	.delete(
-		authController.protect,
-		authController.restrictTo("lead-guide", "admin"),
+		// authController.protect,
+		// authController.restrictTo("lead-guide", "admin"),
 		tourController.deleteTour
 	);
 
