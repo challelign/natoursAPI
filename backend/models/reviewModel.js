@@ -37,11 +37,16 @@ const reviewSchema = new mongoose.Schema(
 
 // to populate the  user and tour data that link with review
 reviewSchema.pre(/^find/, function (next) {
-	this.populate({ path: "tour", select: "name" }).populate({
+	// no need to populate tour at this b/c it is populated at tours model
+	/* 	this.populate({ path: "tour", select: "name" }).populate({
 		path: "user",
 		select: "name photo email",
 	});
-
+ */
+	this.populate({
+		path: "user",
+		select: "name photo email",
+	});
 	next();
 });
 

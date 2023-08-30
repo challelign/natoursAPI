@@ -85,8 +85,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
-	const tour = await Tour.findById(req.params.id);
-
+	const tour = await Tour.findById(req.params.id).populate("reviews");
 	//to populate the actual data of guides
 	// I comment this b/c i added to model as middleware func
 	/* const tour = await Tour.findById(req.params.id).populate({
