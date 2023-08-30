@@ -25,12 +25,12 @@ app.use((req, res, next) => {
 	next();
 });
 
-// mouting the router
+// mounting the router
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
 
-// check if route not found and this code shoud be put after all the route files
+// check if route not found and this code should be put after all the route files
 app.all("*", (req, res, next) => {
 	// res.status(404).json({
 	//   status:"Error",
