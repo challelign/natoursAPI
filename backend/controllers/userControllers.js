@@ -68,12 +68,6 @@ exports.createUser = (req, res) => {
 		message: "This Route is not Found",
 	});
 };
-exports.updateUser = (req, res) => {
-	res.status(500).json({
-		status: "Error",
-		message: "This Route is not Found",
-	});
-};
-
-// Deleting user
+//Do NOT update passwords with this
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
