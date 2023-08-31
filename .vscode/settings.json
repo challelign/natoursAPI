@@ -1,0 +1,8 @@
+{
+	"editor.fontSize": 18,
+	"editor.cursorStyle": "line-thin",
+	"editor.accessibilityPageSize": 15,
+	"editor.autoClosingDelete": "auto",
+	"editor.autoClosingOvertype": "auto",
+	"editor.bracketPairColorization.independentColorPoolPerBracketType": false
+}
