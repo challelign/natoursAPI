@@ -50,6 +50,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 	});
 });
 
+// get user id from the session not from the req.
+exports.getMe = (req, res, next) => {
+	req.params.id = req.user.id;
+	next();
+};
 exports.deleteMe = catchAsync(async (req, res, next) => {
 	await User.findByIdAndUpdate(req.user.id, { active: false });
 	res.status(204).json({
@@ -60,6 +65,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 
 // no populate value to send the factoryHandler getOne func
 exports.getUser = factory.getOne(User);
+
 exports.createUser = (req, res) => {
 	res.status(500).json({
 		status: "Error",
