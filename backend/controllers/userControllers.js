@@ -12,14 +12,16 @@ const filterObj = (obj, ...allowedFields) => {
 	});
 	return newObj;
 };
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-	const users = await User.find();
-	res.status(200).json({
-		totalUsers: users.length,
-		status: "success",
-		data: users,
-	});
-});
+
+exports.getAllUsers = factory.getAll(User);
+// exports.getAllUsers = catchAsync(async (req, res, next) => {
+// 	const users = await User.find();
+// 	res.status(200).json({
+// 		totalUsers: users.length,
+// 		status: "success",
+// 		data: users,
+// 	});
+// });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
 	// 1 create error if user POST a password data
@@ -56,16 +58,12 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 	});
 });
 
-exports.getUser = (req, res) => {
-	res.status(500).json({
-		status: "Error",
-		message: "This Route is not Found",
-	});
-};
+// no populate value to send the factoryHandler getOne func
+exports.getUser = factory.getOne(User);
 exports.createUser = (req, res) => {
 	res.status(500).json({
 		status: "Error",
-		message: "This Route is not Found",
+		message: "This Route is not Defined ! Please use, users/Signup instead",
 	});
 };
 //Do NOT update passwords with this
