@@ -2,6 +2,9 @@ const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+
 const cors = require("cors");
 
 const AppError = require("./utils/appError");
@@ -32,6 +35,14 @@ const limiter = rateLimit({
 	message: "Too Many request from this IP , please try again in an hour",
 });
 app.use("/api", limiter);
+
+// Data sanitization against NoSql query injection
+// MongoDB operators that can be used for query injection attacks
+// $gt, $lt, $gte, $lte, $in, $nin, $regex, $where,
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
 
 // Test MiddleWare
 app.use((req, res, next) => {
