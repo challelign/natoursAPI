@@ -33,6 +33,11 @@ const reviewSchema = new mongoose.Schema(
 	}
 );
 
+// preventing Duplicate reviews from the save user
+// { unique: true }: This option specifies that the index should enforce uniqueness
+//  on the combination of the "tour" and "user" fields.
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 // QUERY MIDDLEWARE
 
 // to populate the  user and tour data that link with review
