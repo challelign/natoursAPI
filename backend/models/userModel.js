@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema({
 	passwordResetExpires: Date,
 });
 
+// while import comment this start
 userSchema.pre("/^find/", function (next) {
 	// this point to the current query
 	this.find({ active: { $ne: false } });
@@ -67,15 +68,16 @@ userSchema.pre("save", async function (next) {
 	this.passwordConfirm = undefined;
 	next();
 });
+//  while import comment this end
 
 // candidatePasswoerd => req.body.password and userPassword is user.password from the database
 // this class called in authController method of password Verify
 // this method is avilable to every userModle class
 userSchema.methods.correctPassword = async function (
-	candidatePasswoerd,
+	candidatePassword,
 	userPassword
 ) {
-	return await bcrypt.compare(candidatePasswoerd, userPassword);
+	return await bcrypt.compare(candidatePassword, userPassword);
 };
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 	if (this.changePasswordAt) {
