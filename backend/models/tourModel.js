@@ -128,7 +128,7 @@ tourSchema.virtual("reviews", {
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
 tourSchema.index({ startLocation: "2dsphere" });
-
+// tourSchema.index({ location: "2dsphere" });
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 
 //  this code add to mongodb by finding user using the give id from tour post
