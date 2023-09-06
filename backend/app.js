@@ -6,6 +6,9 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swaggerConfig"); // Path to your swaggerConfig.js file
+
 const cors = require("cors");
 
 const AppError = require("./utils/appError");
@@ -16,6 +19,7 @@ const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const app = express();
 
+// const tours = require("./models/tourModel");
 // middleware between the req and res
 app.use(cors());
 // body parser reading data from body into req.body
@@ -66,6 +70,23 @@ app.use((req, res, next) => {
 	next();
 });
 
+// Serve Swagger API documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @openapi
+ * /tours:
+ *   get:
+ *     summary: Get all users
+ *     description: Retrieve a list of all users.
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/"/models/tourModel' // Replace with your actual schema
+ */
 // mounting the router
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);

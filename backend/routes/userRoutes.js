@@ -3,6 +3,49 @@ const userController = require("../controllers/userControllers");
 const authController = require("../controllers/authController");
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     description: Get all users
+ *     responses:
+ *       '200':
+ *         description: OK
+ *
+ */
+
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: Submit a form
+ *     description: Submit a form with the provided data
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email of the user
+ *               password:
+ *                 type: string
+ *                 description: The password address of the user
+ *             required:
+ *               - email
+ *               - password
+ *     responses:
+ *       '200':
+ *         description: Successful login
+ *       '401':
+ *         description: Unauthorized - invalid credentials
+ *       '500':
+ *         description: Internal server error
+ */
 // users/signup
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);

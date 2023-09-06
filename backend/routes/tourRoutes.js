@@ -4,6 +4,27 @@ const authController = require("./../controllers/authController");
 // const reviewController = require("../controllers/reviewController");
 const reviewRouter = require("./../routes/reviewRoutes");
 const router = express.Router();
+/**
+ * @swagger
+ * /tours:
+ *   get:
+ *     summary: Get all tours
+ *     description: Get all tours
+ *     responses:
+ *       '200':
+ *         description: OK
+ */
+/**
+ * @swagger
+ * /tours/top-5-cheaps:
+ *   get:
+ *     summary: Get all users
+ *     description: Alias Top5 Cheap Tours
+ *     responses:
+ *       '200':
+ *         description: OK
+ *
+ */
 
 router.use("/:tourId/reviews", reviewRouter);
 
