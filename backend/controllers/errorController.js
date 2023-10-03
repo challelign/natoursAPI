@@ -26,6 +26,8 @@ const handleJWTError = () =>
 const handleTokenExpiredError = () =>
 	new AppError("The Token is Expired. ", 401);
 
+const handleMulterError = () => new AppError("Too many files uploaded . ", 401);
+
 const sendErrorDev = (err, res) => {
 	res.status(err.statusCode).json({
 		status: err.status,
@@ -45,6 +47,8 @@ const sendErrorProd = (err, res) => {
 	if (err.name === "JsonWebTokenError") error = handleJWTError();
 	if (err.name === "TokenExpiredError") error = handleTokenExpiredError();
 
+	if (err.name === "MulterError" || err.code === "LIMIT_UNEXPECTED_FILE")
+		error = handleMulterError();
 	// Log to console for dev
 	console.log("The Error Log is ", err);
 	// if the err is not from the above this will excute

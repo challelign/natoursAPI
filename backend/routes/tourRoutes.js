@@ -38,6 +38,8 @@ router
 
 router.route("/distances/:latlng/unit/:unit").get(tourController.getDistances);
 
+router.route("/:slug/title").get(tourController.getTourUsingSlug);
+
 router
 	.route("/")
 	.get(tourController.getAllTours)
@@ -46,7 +48,14 @@ router
 router
 	.route("/:id")
 	.get(tourController.getTour)
-	.patch(tourController.updateTour)
+	.patch(
+		authController.protect,
+		authController.restrictTo("lead-guide", "admin"),
+		tourController.validateMaxCount,
+		tourController.uploadTourImages,
+		tourController.resizeTourImages,
+		tourController.updateTour
+	)
 	.delete(
 		// authController.protect,
 		// authController.restrictTo("lead-guide", "admin"),

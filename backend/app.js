@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const cookieParser = require("cookie-parser");
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swaggerConfig"); // Path to your swaggerConfig.js file
@@ -19,11 +20,13 @@ const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const app = express();
 
+app.use(express.static("public"));
+app.use("/img/tours", express.static("img/tours"));
+app.use("/img/users", express.static("img/users"));
+
 // const tours = require("./models/tourModel");
 // middleware between the req and res
 app.use(cors());
-// body parser reading data from body into req.body
-app.use(express.json({ limit: "10kb" }));
 
 // 1) Global MIDDLEWARES
 // set security HTTP headers
@@ -35,12 +38,15 @@ if (process.env.NODE_ENV === "development") {
 // Limit requests from the same API
 const limiter = rateLimit({
 	// 100 request from 1 pc Ip for only 1 hrs
-	max: 100,
-	windowMs: 60 * 60 * 1000,
+	max: 1000000,
+	windowMs: 60 * 60 * 10000000,
 	message: "Too Many request from this IP , please try again in an hour",
 });
 app.use("/api", limiter);
 
+// body parser reading data from body into req.body
+app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser());
 // Data sanitization against NoSql query injection
 // MongoDB operators that can be used for query injection attacks
 // $gt, $lt, $gte, $lte, $in, $nin, $regex, $where,
@@ -67,6 +73,7 @@ app.use(
 app.use((req, res, next) => {
 	req.requestTime = new Date().toISOString();
 	// console.log(req.headers)
+	console.log(req.cookies);
 	next();
 });
 

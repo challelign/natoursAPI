@@ -1,3 +1,6 @@
+const multer = require("multer");
+const sharp = require("sharp");
+
 const Tour = require("./../models/tourModel");
 const catchAsync = require("./../utils/catchAsync");
 const APIFeatures = require("../utils/apiFeaturs");
@@ -5,6 +8,73 @@ const APIFeatures = require("../utils/apiFeaturs");
 const AppError = require("../utils/appError");
 const factory = require("./handlerFactory");
 const path = require("path");
+
+const multerStorage = multer.memoryStorage();
+
+// the check the file is image only
+const multerFilter = (req, file, cb) => {
+	if (file.mimetype.startsWith("image")) {
+		cb(null, true);
+	} else {
+		cb(new AppError("Not An image ! Please upload only images.", 400), false);
+	}
+};
+const upload = multer({
+	storage: multerStorage,
+	fileFilter: multerFilter,
+});
+
+exports.uploadTourImages = upload.fields([
+	{ name: "imageCover", maxCount: 1 },
+	{ name: "images", maxCount: 4 },
+]);
+
+// Custom validation function
+exports.validateMaxCount = catchAsync(async (req, res, next) => {
+	// Check if the uploaded files exceed the maximum count
+	const { imageCover, images } = req.files || {};
+	if (imageCover && imageCover.length > 1) {
+		return next(new AppError("Only 1 imageCover file is allowed.", 400));
+	}
+	if (images && images.length > 4) {
+		// return res.status(400).json({ error: "Only 4 images are allowed." });
+		return next(new AppError("Only 4 images are allowed.", 400));
+	}
+
+	next();
+});
+
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+	console.log(req.files);
+	if (!req.files.imageCover || !req.files.images) {
+		return next();
+	}
+	// 1 imageCover processing
+	req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+	await sharp(req.files.imageCover[0].buffer)
+		.resize(2000, 1333)
+		.toFormat("jpeg")
+		.jpeg({ quality: 90 })
+		.toFile(`public/img/tours/${req.body.imageCover}`);
+
+	// 2 Images
+	req.body.images = [];
+	await Promise.all(
+		req.files.images.map(async (file, i) => {
+			const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+			await sharp(file.buffer)
+				.resize(2000, 1333)
+				.toFormat("jpeg")
+				.jpeg({ quality: 90 })
+				.toFile(`public/img/tours/${filename}`);
+
+			req.body.images.push(filename);
+		})
+	);
+	next();
+});
+
 // this class act as middleware
 exports.aliasTopTours = (req, res, next) => {
 	req.query.limit = "5";
@@ -90,6 +160,23 @@ exports.getDistances = catchAsync(async (req, res, next) => {
 		status: "success",
 		data: {
 			data: distances,
+		},
+	});
+});
+
+exports.getTourUsingSlug = catchAsync(async (req, res, next) => {
+	const tour = await Tour.findOne({ slug: req.params.slug }).populate({
+		path: "reviews",
+		fields: "review rating user",
+	});
+	if (!tour) {
+		return next(new AppError("No tour found with that slug", 404));
+	}
+
+	res.status(200).json({
+		status: "success",
+		data: {
+			tour,
 		},
 	});
 });
