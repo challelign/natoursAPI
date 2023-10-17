@@ -1,5 +1,6 @@
 const multer = require("multer");
 const sharp = require("sharp");
+const fs = require("fs");
 
 const Tour = require("./../models/tourModel");
 const catchAsync = require("./../utils/catchAsync");
@@ -44,11 +45,42 @@ exports.validateMaxCount = catchAsync(async (req, res, next) => {
 	next();
 });
 
+exports.deleteFilesStartingWith = catchAsync(async (req, res, next) => {
+	const directoryPath = "public/img/tours/";
+	const prefix = `tour-${req.params.id}`;
+	try {
+		fs.readdirSync(directoryPath).forEach((file) => {
+			if (file.startsWith(prefix)) {
+				fs.unlinkSync(directoryPath + file);
+				console.log(`${file} has been deleted.`);
+			}
+		});
+		next();
+	} catch (error) {
+		console.error(`Failed to delete image: ${error}`);
+		res.status(500).send("Failed to delete image");
+	}
+});
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
 	console.log(req.files);
+	// if either the imageCover or images property is missing goto next middleware do nothing
 	if (!req.files.imageCover || !req.files.images) {
 		return next();
 	}
+	// Delete old imageCover and images
+	/* 	const directoryPath = "public/img/tours/";
+	try {
+		fs.readdirSync(directoryPath).forEach((file) => {
+			// console.log(`chalie test test test for image delete ${directoryPath}`);
+
+			if (file.startsWith(`tour-${req.params.id}`)) {
+				fs.unlinkSync(directoryPath + file);
+				console.log(`${file} has been deleted.`);
+			}
+		});
+	} catch (error) {
+		console.error(`Failed to delete image ${file}: ${error}`);
+	} */
 	// 1 imageCover processing
 	req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
 	await sharp(req.files.imageCover[0].buffer)

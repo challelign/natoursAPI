@@ -65,3 +65,5 @@ if (process.argv[2] === "--import") {
 
 // to run this script node dev-data/data/import-dev-data.js --import
 // to run this script node dev-data/data/import-dev-data.js --delete
+// "import": "node dev-data/data/import-dev-data.js --import",
+// "delete": "node dev-data/data/import-dev-data.js --delete",

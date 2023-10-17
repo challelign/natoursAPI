@@ -42,9 +42,19 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+	const emailExit = await User.findOne({ email: req.body.email });
+
+	if (emailExit) {
+		return next(
+			new AppError("Please User Other Email , Email address exists!", 404)
+		);
+	}
+
 	const newUser = await User.create({
 		name: req.body.name,
 		email: req.body.email,
+		role: req.body.role,
+		isAuthenticated: req.body.isAuthenticated,
 		password: req.body.password,
 		passwordConfirm: req.body.passwordConfirm,
 		// changePasswordAt: req.body.changePasswordAt,
@@ -95,6 +105,10 @@ exports.login = catchAsync(async (req, res, next) => {
 	if (!user || !(await user.correctPassword(password, user.password))) {
 		//correctPassword func from user model
 		return next(new AppError("Incorrect Email Or Password ", 401));
+	}
+
+	if (user && (await user.isAuthenticated) === false) {
+		return next(new AppError(" User is Inactive ", 401));
 	}
 
 	console.log(user);

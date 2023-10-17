@@ -1,5 +1,7 @@
 const multer = require("multer");
 const sharp = require("sharp");
+const fs = require("fs");
+
 const AppError = require("../utils/appError");
 const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
@@ -31,6 +33,23 @@ const upload = multer({
 });
 
 exports.uploadUserPhoto = upload.single("photo");
+
+exports.deleteFilesStartingWith = catchAsync(async (req, res, next) => {
+	const directoryPath = "public/img/users/";
+	const prefix = `user-${req.user.id}`;
+	try {
+		fs.readdirSync(directoryPath).forEach((file) => {
+			if (file.startsWith(prefix)) {
+				fs.unlinkSync(directoryPath + file);
+				console.log(`${file} has been deleted.`);
+			}
+		});
+		next();
+	} catch (error) {
+		console.error(`Failed to delete image: ${error}`);
+		res.status(500).send("Failed to delete image");
+	}
+});
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 	if (!req.file) {

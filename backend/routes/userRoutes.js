@@ -1,6 +1,7 @@
 const express = require("express");
 const userController = require("../controllers/userControllers");
 const authController = require("../controllers/authController");
+const tourController = require("./../controllers/tourControllers");
 
 const router = express.Router();
 
@@ -69,6 +70,8 @@ router.get("/me", userController.getMe, userController.getUser);
 router.patch(
 	"/updateMe",
 	userController.uploadUserPhoto,
+	userController.deleteFilesStartingWith,
+
 	userController.resizeUserPhoto,
 	userController.updateMe
 );
@@ -76,10 +79,16 @@ router.delete("/deleteMe", userController.deleteMe);
 router
 	.route("/")
 	.get(userController.getAllUsers)
-	.post(userController.createUser);
+	.post(
+		authController.restrictTo("lead-guide", "admin", "user"),
+		userController.createUser
+	);
 router
 	.route("/:id")
-	.get(userController.getUser)
+	.get(
+		authController.restrictTo("lead-guide", "admin", "user"),
+		userController.getUser
+	)
 	.patch(userController.updateUser)
 	.delete(authController.restrictTo("admin"), userController.deleteUser);
 

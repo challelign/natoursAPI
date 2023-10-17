@@ -50,13 +50,14 @@ const tourSchema = new mongoose.Schema(
 		},
 		priceDiscount: {
 			type: Number,
-			validate: {
+			default: 0,
+			/* validate: {
 				validator: function (val) {
 					// this only points to current doc on NEW document creation
 					return val < this.price; // this.price referes to the price attribute
 				},
-				message: "Discount price ({VALUE}) should be below regular price",
-			},
+				message: `Discount price ({VALUE}) should be below regular price (${this.price})`,
+			}, */
 		},
 		summary: {
 			type: String,
@@ -83,7 +84,9 @@ const tourSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		startLocation: {
+
+		// uncomment this start
+		/* 		startLocation: {
 			//GeoJSON
 			type: {
 				type: String,
@@ -107,7 +110,10 @@ const tourSchema = new mongoose.Schema(
 				description: String,
 				day: Number,
 			},
-		],
+		], */
+
+		// uncomment this end
+
 		// guides: Array,
 		guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
 	},
@@ -125,9 +131,16 @@ tourSchema.virtual("reviews", {
 });
 
 // tourSchema.index({price:1})
+
+// un comment this start
+/* 
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
 tourSchema.index({ startLocation: "2dsphere" });
+
+ */
+// un comment this end
+
 // tourSchema.index({ location: "2dsphere" });
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
 
