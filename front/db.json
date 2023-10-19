@@ -1,0 +1,136 @@
+{
+  "superheroes": [
+    {
+      "id": 1,
+      "name": "Batman",
+      "alterEgo": "Bruce Wayne"
+    },
+    {
+      "id": 2,
+      "name": "Superman",
+      "alterEgo": "Clark Kent"
+    },
+    {
+      "id": 3,
+      "name": "Wonder Woman 1",
+      "alterEgo": "Princess Diana"
+    },
+    {
+      "name": "Hager sew Atashiwoyi",
+      "alterEgo": "Ethiopia",
+      "id": 5
+    },
+    {
+      "name": "new test",
+      "alterEgo": "Test",
+      "id": 6
+    },
+    {
+      "name": "dfadf",
+      "alterEgo": "adfa",
+      "id": 7
+    },
+    {
+      "name": "external databasae",
+      "alterEgo": "external databasae",
+      "id": 8
+    },
+    {
+      "name": "Time  Challelign Tilahun Mekuria",
+      "alterEgo": "New Test",
+      "id": 9
+    },
+    {
+      "name": "Challelign Tilahun Mekuria",
+      "alterEgo": "Tet Two",
+      "id": 10
+    },
+    {
+      "name": "Chalie I got Updated solved",
+      "alterEgo": "Poor Water",
+      "id": 11
+    },
+    {
+      "name": "Melos Simeneh",
+      "alterEgo": "React Developer",
+      "id": 12
+    }
+  ],
+  "friends": [
+    {
+      "id": 1,
+      "name": "chalie"
+    },
+    {
+      "id": 2,
+      "name": "Abe"
+    },
+    {
+      "id": 3,
+      "name": "Melos"
+    }
+  ],
+  "users": [
+    {
+      "id": "chalie@gmail.com",
+      "channelId": "codevolution"
+    },
+    {
+      "id": "a@gmail.com",
+      "channelId": "agangs"
+    }
+  ],
+  "channels": [
+    {
+      "id": "codevolution",
+      "courses": [
+        "react",
+        "vue",
+        "angular"
+      ]
+    },
+    {
+      "id": "agangs",
+      "courses": [
+        "c#",
+        "Nodejs",
+        "angular",
+        "Next"
+      ]
+    }
+  ],
+  "colors": [
+    {
+      "id": 1,
+      "label": "red"
+    },
+    {
+      "id": 2,
+      "label": "blue"
+    },
+    {
+      "id": 3,
+      "label": "green"
+    },
+    {
+      "id": 4,
+      "label": "yellow"
+    },
+    {
+      "id": 5,
+      "label": "black"
+    },
+    {
+      "id": 6,
+      "label": "white"
+    },
+    {
+      "id": 7,
+      "label": "orange"
+    },
+    {
+      "id": 8,
+      "label": "purple"
+    }
+  ]
+}
