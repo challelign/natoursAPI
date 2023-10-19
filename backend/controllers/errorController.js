@@ -42,7 +42,8 @@ const sendErrorProd = (err, res) => {
 	error.message = err.message;
 
 	if (err.name === "CastError") error = handleCastErrorDB(err);
-	if (err.code === 11000) error = handleDuplicateFieldsDB(err);
+	if (err.code === 11000 || err.name === "MongoError")
+		error = handleDuplicateFieldsDB(err);
 	if (err.name === "ValidationError") error = handleValidationErrorDB(err);
 	if (err.name === "JsonWebTokenError") error = handleJWTError();
 	if (err.name === "TokenExpiredError") error = handleTokenExpiredError();

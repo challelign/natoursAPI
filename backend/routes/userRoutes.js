@@ -70,7 +70,8 @@ router.get("/me", userController.getMe, userController.getUser);
 router.patch(
 	"/updateMe",
 	userController.uploadUserPhoto,
-	userController.deleteFilesStartingWith,
+	// this middleware run when every update req send at that time it delete the image
+	// userController.deleteFilesStartingWith,
 
 	userController.resizeUserPhoto,
 	userController.updateMe

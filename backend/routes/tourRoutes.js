@@ -53,7 +53,7 @@ router
 		authController.restrictTo("lead-guide", "admin"),
 		tourController.validateMaxCount,
 		tourController.uploadTourImages,
-		tourController.deleteFilesStartingWith,
+		// tourController.deleteFilesStartingWith,
 
 		tourController.resizeTourImages,
 		tourController.updateTour

@@ -34,7 +34,7 @@ const upload = multer({
 
 exports.uploadUserPhoto = upload.single("photo");
 
-exports.deleteFilesStartingWith = catchAsync(async (req, res, next) => {
+/* exports.deleteFilesStartingWith = catchAsync(async (req, res, next) => {
 	const directoryPath = "public/img/users/";
 	const prefix = `user-${req.user.id}`;
 	try {
@@ -50,10 +50,25 @@ exports.deleteFilesStartingWith = catchAsync(async (req, res, next) => {
 		res.status(500).send("Failed to delete image");
 	}
 });
-
+ */
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 	if (!req.file) {
 		return next();
+	}
+
+	// Delete old   images
+	const directoryPath = "public/img/users/";
+	try {
+		fs.readdirSync(directoryPath).forEach((file) => {
+			// console.log(`chalie test test test for image delete ${directoryPath}`);
+
+			if (file.startsWith(`user-${req.user.id}`)) {
+				fs.unlinkSync(directoryPath + file);
+				console.log(`${file} has been deleted.`);
+			}
+		});
+	} catch (error) {
+		console.error(`Failed to delete image ${file}: ${error}`);
 	}
 
 	req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;

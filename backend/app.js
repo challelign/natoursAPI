@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === "development") {
 const limiter = rateLimit({
 	// 100 request from 1 pc Ip for only 1 hrs
 	max: 1000000,
-	windowMs: 60 * 60 * 10000000,
+	windowMs: 60 * 60 * 1000,
 	message: "Too Many request from this IP , please try again in an hour",
 });
 app.use("/api", limiter);
