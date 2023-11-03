@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
+import EditIcon from "@mui/icons-material/Edit";
+
 import UpdateUserForm from "../components/UpdateUserForm";
 import TourUpdate from "../components/TourUpdate";
 
@@ -17,7 +19,7 @@ const EditTourDialog = ({ tourToEdit }) => {
 				variant="danger"
 				onClick={() => setShow(true)}
 			>
-				Edit
+				<EditIcon />
 			</Button>
 
 			<Modal show={show} onHide={handleClose}>

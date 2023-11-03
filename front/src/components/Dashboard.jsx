@@ -8,7 +8,8 @@ const Dashboard = () => {
 	const {
 		isLoading,
 		isError,
-		data: products,
+		// data: products,
+		data: { data: products, totalCount } = {},
 		status,
 		error,
 	} = useQuery({
@@ -22,7 +23,7 @@ const Dashboard = () => {
 	return (
 		<main className="main">
 			<div className="card-container">
-				{products?.map((product) => (
+				{products?.data?.map((product) => (
 					<>
 						<div className="card" key={product._id}>
 							<div className="card__header">

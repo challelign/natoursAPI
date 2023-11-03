@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import Logout from "../components/Logout";
 import useUser from "../components/auth/useUser";
 import { url } from "../url";
+import DarkModeToggle from "./DarkModeToggle";
 
 function Header() {
 	const { isLoading, user, isAuthenticated } = useUser();
@@ -50,6 +51,7 @@ function Header() {
 							<span>{user?.name}</span>
 						</NavLink>
 						<Logout />
+						<DarkModeToggle />
 					</>
 				) : (
 					<>

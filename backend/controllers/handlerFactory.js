@@ -66,6 +66,11 @@ exports.getAll = (Model) =>
 	catchAsync(async (req, res, next) => {
 		// for ratting get all
 		// To allow for nested GET reviews on Tour (hack)
+
+		// to count all the data in the model
+		const featuresCount = new APIFeatures(Model.find(), req.query);
+		const countAll = await featuresCount.query;
+
 		let filter = {};
 		if (req.params.tourId) {
 			filter = { tour: req.params.tourId };
@@ -80,6 +85,7 @@ exports.getAll = (Model) =>
 		res.status(200).json({
 			status: "success",
 			totalRes: doc.length,
+			totalCount: countAll.length,
 			data: {
 				data: doc,
 			},

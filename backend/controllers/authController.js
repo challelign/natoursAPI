@@ -200,6 +200,7 @@ exports.restrictTo = (...roles) => {
 exports.forgetPassword = catchAsync(async (req, res, next) => {
 	// 1 get user based on the given req.body.email email
 	const user = await User.findOne({ email: req.body.email });
+	console.log(user);
 	if (!user) {
 		return next(new AppError("User not found", 404));
 	}
@@ -208,12 +209,21 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
 	await user.save({ validateBeforeSave: false }); //this is built-in mongoose document
 
 	// 3 send it to the email
+	// This is for backend api
+	const resetUrlFront = `http://localhost:3005/forget-password-rest/${resetToken}`;
+
 	const resetUrl = `${req.protocol}://${req.get(
 		"host"
 	)}/api/v1/users/resetPassword/${resetToken}`;
 	const message = `You are receiving this email because you (or someone else) 
   have requested the reset of a password. Please make a 
-  PUT request to: \n\n ${resetUrl}\n\n If you did not request this, please ignore this email and your password will remain unchanged.\n`;
+  PUT request to: \n\n <a href="${resetUrlFront}">  ${resetUrl} </a>\n\n If you did not request this, please ignore this email and your password will remain unchanged.\n`;
+
+	//   this for frontend
+
+	// 	const messageFront = `You are receiving this email because you (or someone else)
+	//   have requested the reset of a password. Please make a
+	//   PUT request to: \n\n <a href="${resetUrlFront}">  ${resetUrlFront} </a>\n\n If you did not request this, please ignore this email and your password will remain unchanged.\n`;
 
 	try {
 		await sendEmail({

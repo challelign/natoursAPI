@@ -77,17 +77,27 @@ const StarRating = ({
 		const dataValue = { review, rating };
 		if (reviewComment) {
 			updateReview(dataValue);
+			setErrorMsg("");
 			onClose();
 		} else {
-			console.log(dataValue);
+			// console.log(dataValue);
 			createReview(dataValue);
+			setRating(0);
+			setReview("");
+			setErrorMsg("");
 		}
 	};
 
 	const handleCancel = () => {
-		setRating(reviewComment?.rating || 0);
-		setReview(reviewComment?.review || "");
-		setErrorMsg("");
+		if (reviewComment) {
+			setRating(reviewComment?.rating);
+			setReview(reviewComment?.review);
+			setErrorMsg("");
+		} else {
+			setRating(0);
+			setReview("");
+			setErrorMsg("");
+		}
 	};
 
 	return (
@@ -111,23 +121,20 @@ const StarRating = ({
 								{/* {reviewComment?.user?._id} */}
 							</Typography>
 							<form onSubmit={handleSubmit}>
-								<div>
-									<Grid item xs={6}>
-										<TextField
-											fullWidth
-											id="filled-multiline-static"
-											label="Comment Tour"
-											multiline
-											value={review}
-											disabled={reviewComment ? isUpdating : isLoading}
-											name="review"
-											onChange={(e) => setReview(e.target.value)}
-											rows={4}
-										/>
-									</Grid>
-								</div>
-								{/* {reviewComment.rating} */}
-								<br />
+								<Grid item xs={6}>
+									<TextField
+										fullWidth
+										id="filled-multiline-static"
+										label="Comment Tour"
+										multiline
+										value={review}
+										disabled={reviewComment ? isUpdating : isLoading}
+										name="review"
+										onChange={(e) => setReview(e.target.value)}
+										rows={4}
+									/>
+								</Grid>
+
 								<div style={starContainerStyle}>
 									{Array.from({ length: maxRating }, (_, i) => (
 										<Star
@@ -146,7 +153,7 @@ const StarRating = ({
 									</p>
 								</div>
 								<Stack
-									spacing={2}
+									spacing={1}
 									direction="row"
 									disabled={reviewComment ? isUpdating : isLoading}
 									sx={{ mt: 3, mb: 3 }}

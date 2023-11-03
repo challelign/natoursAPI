@@ -9,14 +9,18 @@ import api from "./api";
 // 	// },
 // });
 
-export const getTours = async () => {
-	const { data, error } = await api.get(`/tours`);
+export const getTours = async (page) => {
+	const { data, error } = await api.get(`/tours/?limit=5&page=${page}`);
 	if (error) {
 		console.error("getTours", error);
 		throw new Error("Products Could not be loaded");
 	}
-	// console.log(data.data.data);
-	return data.data.data;
+	console.log(data);
+	console.log(data.totalCount);
+	return data;
+	// return {
+	// 	data: data.data.data,
+	// };
 };
 export const getToursUsingId = async (id) => {
 	const { data, error } = await api.get(`/tours/${id}`);
@@ -60,7 +64,11 @@ export const createToursAPI = async (newTour) => {
 
 		// log the error from the backend api
 		console.error(error.response.data.error);
-		throw new Error(error.response.data.error.message);
+		// throw new Error(error.response.data.error.message);
+		throw new Error(
+			error.response.data.error
+			//|| error.response.data.error.code
+		);
 	}
 };
 
@@ -98,7 +106,7 @@ export const createToursAPI = async (newTour) => {
 	}
 };
  */
-export const deleteTour = async (id) => {
+export const deleteTourAPI = async (id) => {
 	const { data, error } = await api.delete(`/tours/${id}`);
 	if (error) {
 		console.error("deleteTours", error);
@@ -290,7 +298,8 @@ export const updateTourAPI = async (userId, dataValue) => {
 	} catch (error) {
 		console.error(error.response.data.error);
 		throw new Error(
-			error.response.data.error.message || error.response.data.error.codeName
+			error.response.data.error
+			// error.response.data.error.message || error.response.data.error.codeName
 		);
 	}
 };
@@ -361,4 +370,62 @@ export const getAllReviewsAPI = async () => {
 	}
 	console.log(data.data.data);
 	return data.data.data;
+};
+
+export const deleteReviewAPI = async (id) => {
+	const { data, error } = await api.delete(`/reviews/${id}`);
+	if (error) {
+		console.error("deleteReviewAPI", error);
+		throw new Error("Review Could not be deleted");
+	}
+	return data.data;
+};
+
+export const forgetPasswordAPI = async ({ email }) => {
+	console.log(email);
+	try {
+		const { data, error } = await api.post(`/users/forgetPassword`, { email });
+		if (error) {
+			console.error("user not login", error);
+			throw new Error("  Could is send forget email notification");
+		}
+
+		if (error) {
+			console.error("create review", error);
+			throw new Error("review Could not be updated");
+		}
+		if (data !== undefined && data.data !== undefined) {
+			console.log(data.data);
+		} else {
+			console.log("Error: Invalid response");
+		}
+		return data.data;
+	} catch (error) {
+		console.error(error.response.data.error);
+		throw new Error(
+			error.response.data.error.message || error.response.data.error.codeName
+		);
+	}
+};
+
+export const resetPasswordUsingTokenAPI = async (token, dataValue) => {
+	// console.log(token);
+	// console.log(dataValue);
+	try {
+		const { data, error } = await api.patch(
+			`/users/resetPassword/${token}`,
+			dataValue
+		);
+		if (error) {
+			console.error(" password not changed", error);
+			throw new Error("  user password Could not be changed");
+		}
+		return data.data;
+	} catch (error) {
+		console.error(error.response.data.error);
+		// throw new Error(error.response.data.error);
+		throw new Error(
+			error.response.data.error.message || error.response.data.error.codeName
+		);
+	}
 };

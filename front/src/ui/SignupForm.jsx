@@ -36,23 +36,15 @@ export default function SignupForm() {
 	const { register, formState, getValues, handleSubmit, reset } = useForm();
 	const { errors } = formState;
 
-	// {
-	// 	name, email, password, passwordConfirm, roles;
-	// }
 	const onSubmit = ({ name, email, password, passwordConfirm, role }) => {
-		// console.log(data);
 		console.log(role);
-		// console.log(name);
-		// console.log(email);
+
 		createUser(
 			{ name, email, password, passwordConfirm, role },
 			{ onSettled: () => reset() }
 		);
 	};
-	// const handleChange = (event) => {
-	// 	setRoles(event.target.value);
-	// 	alert(event.target.value);
-	// };
+
 	return (
 		<ThemeProvider theme={defaultTheme}>
 			<Container component="main" maxWidth="xl">

@@ -42,7 +42,8 @@ router.route("/:slug/title").get(tourController.getTourUsingSlug);
 
 router
 	.route("/")
-	.get(tourController.getAllTours)
+
+	.get(authController.protect, tourController.getAllTours)
 	.post(tourController.createTour);
 
 router

@@ -1,77 +1,93 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
-import { deleteTour } from "../api/NatoursAPI";
-import { toast } from "react-hot-toast";
 import useUser from "./auth/useUser";
 import TourUpdate from "./TourUpdate";
-import { Box } from "@mui/system";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditTourDialog from "../ui/EditTourDialog";
+import useCreateTour from "./auth/useCreateTour";
+import useDeleteTour from "./auth/useDeleteTour";
 const formatCurrency = require("format-currency");
 
-const TourList = ({ product }) => {
+const TourList = ({ tour }) => {
 	const {
-		id: productId,
+		id: tourId,
 		name,
 		duration,
 		difficulty,
 		price,
 		ratingsAverage,
-	} = product;
+		maxGroupSize,
+		priceDiscount,
+	} = tour;
 	const { user, isAuthenticated } = useUser();
 	const [showForm, setShowForm] = useState(false);
-
-	const queryClient = useQueryClient();
-	const { isLoading: isDeleting, mutate } = useMutation({
-		mutationFn: (id) => deleteTour(id),
-		onSuccess: () => {
-			toast.success("Tours successfully deleted");
-			queryClient.invalidateQueries({ queryKey: ["tours"] });
-		},
-		onError: (err) => toast.error(err.message),
-	});
+	const { isCreatingTours, createTour } = useCreateTour();
+	const { isDeleting, deleteTour } = useDeleteTour();
 
 	const handleSubmit = () => {
 		setShowForm(false);
 	};
+	const handleDelete = (tourId) => {
+		// console.log(tourId);
+		deleteTour(tourId);
+	};
+	const handleDuplicate = () => {
+		createTour({
+			name: `Copy of ${name}`,
+			duration,
+			difficulty,
+			price,
+			priceDiscount,
+
+			ratingsAverage,
+			maxGroupSize,
+		});
+	};
+
 	return (
 		<>
-			<tr product={product} key={product.id}>
-				{/* 	<td>{product._id}</td>
-				<td>{product.name}</td>  */}
+			<tr product={tour} key={tour.id}>
+				{/* 	<td>{tour._id}</td>
+				<td>{tour.name}</td>  */}
 
-				<td>{productId}</td>
+				<td>{tourId}</td>
 				<td>{name}</td>
 				<td>{duration}</td>
 				<td>{difficulty}</td>
 				<td>{formatCurrency(price)}</td>
+				<td>{formatCurrency(priceDiscount)}</td>
+
 				<td>{ratingsAverage}</td>
+				<td>{maxGroupSize}</td>
 				{user && isAuthenticated && user?.role === "admin" ? (
 					<>
 						<td>
 							<Button
 								style={{ fontWeight: "bold", fontSize: "16px" }}
 								variant="danger"
-								onClick={() => mutate(product._id)}
+								onClick={() => handleDelete(tour._id)}
 								disabled={isDeleting}
 							>
-								Delete
+								<DeleteIcon />
 							</Button>
 						</td>
 						<td>
-							{/* <Button
-								style={{ fontWeight: "bold", fontSize: "16px" }}
-								variant="primary"
-								onClick={() => setShowForm((sw) => !showForm)}
-								disabled={isDeleting}
-							>
-								{!showForm ? "Edit" : "Close"}
-							</Button> */}
 							<EditTourDialog
-								tourToEdit={product}
+								tourToEdit={tour}
 								// tourId={productId}
 								// onClose={handleSubmit}
 							/>
+						</td>
+						<td>
+							<Button
+								style={{ fontWeight: "bold", fontSize: "16px" }}
+								variant="primary"
+								onClick={handleDuplicate}
+								disabled={isDeleting}
+							>
+								<ContentCopyIcon />
+							</Button>
 						</td>
 					</>
 				) : (
@@ -81,8 +97,8 @@ const TourList = ({ product }) => {
 			<div>
 				{showForm && (
 					<TourUpdate
-						tourToEdit={product}
-						tourId={productId}
+						tourToEdit={tour}
+						tourId={tourId}
 						onClose={handleSubmit} // this help to close the form while form submit data in the tourUpdate
 					/>
 				)}

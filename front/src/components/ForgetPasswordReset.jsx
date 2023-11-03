@@ -4,46 +4,34 @@ import React, { useEffect, useState } from "react";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import { useLogin } from "./auth/useLogin";
-import Spinner from "../ui/Spinner";
-import useUser from "./auth/useUser";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import SpinnerMini from "../ui/SpinnerMini";
-import toast from "react-hot-toast";
 import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-const Error = styled.span`
-	font-size: 1.4 rem;
-	color: var(--color-red-700);
-`;
-const Login = () => {
-	const [email, setEmail] = useState("sophie@example.com");
-	const [password, setPassword] = useState("test1234");
-	const { login, isLoading } = useLogin();
-	const { user, isAuthenticated } = useUser();
+import { useResetTokenPasswordChange } from "./auth/useResetTokenPasswordChange";
 
-	console.log(user);
+const ForgetPasswordReset = () => {
+	const { token } = useParams();
+	console.log(token);
+	const [passwordConfirm, setPasswordConfirm] = useState();
+	const [password, setPassword] = useState();
+	const { resetPasswordToken, isChanging } = useResetTokenPasswordChange(token);
 	const navigate = useNavigate();
-	useEffect(() => {
-		if (isAuthenticated) {
-			navigate("/dashboard");
-		}
-	}, [user]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (!email || !password) {
+		if (!passwordConfirm || !password) {
 			return;
 		}
-		login(
-			{ email, password },
-			{
-				onSettled: () => {
-					setEmail("");
-					setPassword("");
-				},
-			}
-		);
+
+		const dataValue = { password, passwordConfirm };
+		if (token == null) {
+			alert("No Token");
+		}
+		resetPasswordToken(dataValue, {
+			onSuccess: () => {
+				navigate("/dashboard");
+			},
+		});
 	};
 	return (
 		<div>
@@ -66,7 +54,7 @@ const Login = () => {
 					<Col className="text-center">
 						<p>admin@natours.io</p>
 						<Form.Label style={{ fontWeight: "bold", fontSize: "24px" }}>
-							Please User Your Email and Password
+							Confirm Your Email and Change Your Password
 						</Form.Label>
 					</Col>
 				</Form.Group>
@@ -75,34 +63,6 @@ const Login = () => {
 				<Form.Group className="row">
 					<Col sm="4"> </Col>
 					<Col sm="6">
-						<Form.Group
-							as={Row}
-							className="mb-3"
-							controlId="formPlaintextEmail"
-						>
-							<Form.Label
-								column
-								sm="2"
-								style={{ fontWeight: "bold", fontSize: "16px" }}
-							>
-								Email
-							</Form.Label>
-							<Col sm="6">
-								<Form.Control
-									style={{
-										border: "1px solid #ccc",
-										borderRadius: "4px",
-										padding: "8px",
-										fontSize: "16px",
-									}}
-									autoComplete="username"
-									type="email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									disabled={isLoading}
-								/>
-							</Col>
-						</Form.Group>
 						<Form.Group
 							as={Row}
 							className="mb-3"
@@ -126,8 +86,38 @@ const Login = () => {
 									type="password"
 									placeholder="Password"
 									value={password}
-									disabled={isLoading}
+									disabled={isChanging}
 									onChange={(e) => setPassword(e.target.value)}
+								/>
+							</Col>
+						</Form.Group>
+
+						<Form.Group
+							as={Row}
+							className="mb-3"
+							controlId="formPlaintextEmail"
+						>
+							<Form.Label
+								column
+								sm="2"
+								style={{ fontWeight: "bold", fontSize: "16px" }}
+							>
+								Confirm Password
+							</Form.Label>
+							<Col sm="6">
+								<Form.Control
+									style={{
+										border: "1px solid #ccc",
+										borderRadius: "4px",
+										padding: "8px",
+										fontSize: "16px",
+									}}
+									autoComplete="username"
+									type="password"
+									placeholder="Confirm Password"
+									value={passwordConfirm}
+									onChange={(e) => setPasswordConfirm(e.target.value)}
+									disabled={isChanging}
 								/>
 							</Col>
 						</Form.Group>
@@ -135,7 +125,7 @@ const Login = () => {
 							<Col sm="2"> </Col>
 							<Col sm="6" className="d-grid gap-2">
 								<Button
-									disabled={isLoading}
+									disabled={isChanging}
 									type="submit"
 									variant="primary"
 									size="lg"
@@ -146,7 +136,7 @@ const Login = () => {
 										fontSize: "16px",
 									}}
 								>
-									{!isLoading ? "Login" : <SpinnerMini />}
+									{!isChanging ? "Change Password" : <SpinnerMini />}
 								</Button>
 							</Col>
 						</Form.Group>
@@ -163,7 +153,7 @@ const Login = () => {
 										textDecoration: "none",
 									}}
 								>
-									Forgot password?
+									Login To Your Account
 								</Link>
 							</Col>
 						</Form.Group>
@@ -174,4 +164,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default ForgetPasswordReset;

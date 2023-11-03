@@ -12,38 +12,23 @@ import SpinnerMini from "../ui/SpinnerMini";
 import toast from "react-hot-toast";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
+import { useForgetPassword } from "./auth/useForgetPassword";
 const Error = styled.span`
 	font-size: 1.4 rem;
 	color: var(--color-red-700);
 `;
-const Login = () => {
-	const [email, setEmail] = useState("sophie@example.com");
-	const [password, setPassword] = useState("test1234");
-	const { login, isLoading } = useLogin();
-	const { user, isAuthenticated } = useUser();
-
-	console.log(user);
-	const navigate = useNavigate();
-	useEffect(() => {
-		if (isAuthenticated) {
-			navigate("/dashboard");
-		}
-	}, [user]);
+const ForgetPassword = () => {
+	const [email, setEmail] = useState("chalie2123@gmail.com");
+	const { forgetPassword, isSending } = useForgetPassword();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (!email || !password) {
+		if (!email) {
 			return;
 		}
-		login(
-			{ email, password },
-			{
-				onSettled: () => {
-					setEmail("");
-					setPassword("");
-				},
-			}
-		);
+		// console.log(email);
+
+		forgetPassword({ email });
 	};
 	return (
 		<div>
@@ -64,9 +49,9 @@ const Login = () => {
 						/>
 					</div>
 					<Col className="text-center">
-						<p>admin@natours.io</p>
+						<br />
 						<Form.Label style={{ fontWeight: "bold", fontSize: "24px" }}>
-							Please User Your Email and Password
+							Valid Email and Confirm Your Email
 						</Form.Label>
 					</Col>
 				</Form.Group>
@@ -98,44 +83,18 @@ const Login = () => {
 									autoComplete="username"
 									type="email"
 									value={email}
+									placeholder="Provide Valid Email"
 									onChange={(e) => setEmail(e.target.value)}
-									disabled={isLoading}
+									disabled={isSending}
 								/>
 							</Col>
 						</Form.Group>
-						<Form.Group
-							as={Row}
-							className="mb-3"
-							controlId="formPlaintextPassword"
-						>
-							<Form.Label
-								column
-								sm="2"
-								style={{ fontWeight: "bold", fontSize: "16px" }}
-							>
-								Password
-							</Form.Label>
-							<Col sm="6">
-								<Form.Control
-									style={{
-										border: "1px solid #ccc",
-										borderRadius: "4px",
-										padding: "8px",
-										fontSize: "16px",
-									}}
-									type="password"
-									placeholder="Password"
-									value={password}
-									disabled={isLoading}
-									onChange={(e) => setPassword(e.target.value)}
-								/>
-							</Col>
-						</Form.Group>
+
 						<Form.Group className="row">
 							<Col sm="2"> </Col>
 							<Col sm="6" className="d-grid gap-2">
 								<Button
-									disabled={isLoading}
+									disabled={isSending}
 									type="submit"
 									variant="primary"
 									size="lg"
@@ -146,7 +105,7 @@ const Login = () => {
 										fontSize: "16px",
 									}}
 								>
-									{!isLoading ? "Login" : <SpinnerMini />}
+									{!isSending ? "Send Confirmation Email" : <SpinnerMini />}
 								</Button>
 							</Col>
 						</Form.Group>
@@ -154,7 +113,7 @@ const Login = () => {
 							<Col sm="2"> </Col>
 							<Col sm="6" className="d-grid gap-2">
 								<Link
-									href="/forget-password"
+									href="/login"
 									variant="body2"
 									size="lg"
 									style={{
@@ -163,7 +122,7 @@ const Login = () => {
 										textDecoration: "none",
 									}}
 								>
-									Forgot password?
+									Login To Your Account
 								</Link>
 							</Col>
 						</Form.Group>
@@ -174,4 +133,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default ForgetPassword;

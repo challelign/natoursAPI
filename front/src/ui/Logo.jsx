@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledLogo = styled.div`
 	text-align: center;
@@ -9,9 +10,12 @@ const Img = styled.img`
 	width: auto;
 `;
 function Logo() {
+	const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+	const src = isDarkMode ? "/logo-dark.png" : "/logo-light.png";
 	return (
 		<StyledLogo>
-			<Img src="/logo-light.png" alt="Logo" />
+			<Img src={src} alt="Logo" />
 		</StyledLogo>
 	);
 }
