@@ -16,13 +16,21 @@ const Error = styled.span`
 	font-size: 1.4 rem;
 	color: var(--color-red-700);
 `;
+const FullPage = styled.div`
+	height: 100vh;
+	--color-gray-50: rgb(204, 204, 204)
+	background-color: var(--color-gray-50);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
 const Login = () => {
 	const [email, setEmail] = useState("sophie@example.com");
 	const [password, setPassword] = useState("test1234");
-	const { login, isLoading } = useLogin();
-	const { user, isAuthenticated } = useUser();
+	const { login, isLogging } = useLogin();
+	const { user, isAuthenticated, isLoading } = useUser();
 
-	console.log(user);
+	// console.log(user);
 	const navigate = useNavigate();
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -45,6 +53,7 @@ const Login = () => {
 			}
 		);
 	};
+	if (isLoading) return <SpinnerMini />;
 	return (
 		<div>
 			<Form onSubmit={handleSubmit}>
@@ -99,7 +108,7 @@ const Login = () => {
 									type="email"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
-									disabled={isLoading}
+									disabled={isLogging}
 								/>
 							</Col>
 						</Form.Group>
@@ -126,7 +135,7 @@ const Login = () => {
 									type="password"
 									placeholder="Password"
 									value={password}
-									disabled={isLoading}
+									disabled={isLogging}
 									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</Col>
@@ -135,7 +144,7 @@ const Login = () => {
 							<Col sm="2"> </Col>
 							<Col sm="6" className="d-grid gap-2">
 								<Button
-									disabled={isLoading}
+									disabled={isLogging}
 									type="submit"
 									variant="primary"
 									size="lg"
@@ -146,7 +155,7 @@ const Login = () => {
 										fontSize: "16px",
 									}}
 								>
-									{!isLoading ? "Login" : <SpinnerMini />}
+									{!isLogging ? "Login" : <SpinnerMini />}
 								</Button>
 							</Col>
 						</Form.Group>

@@ -21,7 +21,7 @@ const Dashboard = () => {
 		return <Spinner />;
 	}
 	return (
-		<main className="main">
+		<main className="main" key={products?.id}>
 			<div className="card-container">
 				{products?.data?.map((product) => (
 					<>

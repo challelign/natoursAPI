@@ -81,12 +81,13 @@ function Pagination({ count }) {
 		setSearchParams(searchParams);
 	}
 
-	// if (pageCount <= 1) return null;
+	if (pageCount <= 1) return null;
 
 	return (
 		<StyledPagination>
 			<P>
-				Showing <span>{(currentPage - 1) * PAGE_SIZE + 1}</span> to{" "}
+				current page is <span>{currentPage}</span> showing{" "}
+				<span>{(currentPage - 1) * PAGE_SIZE + 1}</span> to{" "}
 				<span>
 					{currentPage === pageCount ? count : currentPage * PAGE_SIZE}
 				</span>{" "}

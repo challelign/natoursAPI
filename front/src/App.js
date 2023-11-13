@@ -44,7 +44,11 @@ function App() {
 								</ProtectedRoute>
 							}
 						>
-							<Route index element={<Navigate replace to="dashboard" />} />
+							<Route
+								path="/"
+								index
+								element={<Navigate replace to="dashboard" />}
+							/>
 							<Route path="dashboard" element={<Dashboard />} />
 							<Route path="/dashboard/:slug" element={<TourDetail />} />
 							<Route path="/tours" element={<Tours />} />

@@ -10,7 +10,7 @@ import api from "./api";
 // });
 
 export const getTours = async (page) => {
-	const { data, error } = await api.get(`/tours/?limit=5&page=${page}`);
+	const { data, error } = await api.get(`/tours/?limit=6&page=${page}`);
 	if (error) {
 		console.error("getTours", error);
 		throw new Error("Products Could not be loaded");

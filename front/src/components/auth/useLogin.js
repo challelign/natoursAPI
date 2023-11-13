@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 export const useLogin = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const { mutate: login, isLoading } = useMutation({
+	const { mutate: login, isLoading: isLogging } = useMutation({
 		mutationFn: ({ email, password }) =>
 			loginUser({
 				email,
@@ -16,14 +16,20 @@ export const useLogin = () => {
 			}),
 		onSuccess: (user) => {
 			queryClient.setQueryData(["user"], user.data);
-			console.log(user);
+			// console.log(user);
+			console.log("Login successful:", user);
 
 			navigate("/dashboard", { replace: true });
 		},
+		// added later
+		onSettled: () => {
+			queryClient.invalidateQueries(["user"]);
+		},
+
 		onError: (err) => {
 			console.log("ERROR", err);
 			toast.error("Provided Email or Password Or user is Inactive");
 		},
 	});
-	return { login, isLoading };
+	return { login, isLogging };
 };
