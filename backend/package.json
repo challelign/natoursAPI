@@ -5,7 +5,7 @@
 	"main": "app.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "cross-env nodemon server.js",
+		"start": "cross-env NODE_ENV=development nodemon server.js",
 		"prod": "cross-env NODE_ENV=production nodemon server.js",
 		"import": "node dev-data/data/import-dev-data.js --import",
 		"delete": "node dev-data/data/import-dev-data.js --delete",
@@ -42,6 +42,7 @@
 		"swagger-ui-express": "^5.0.0",
 		"update": "^0.7.4",
 		"validator": "^13.9.0",
+		"winston": "^3.11.0",
 		"xss-clean": "^0.1.4"
 	},
 	"devDependencies": {

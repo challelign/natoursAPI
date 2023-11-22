@@ -1,3 +1,4 @@
+const logger = require("../logger");
 const AppError = require("./../utils/appError");
 
 const handleCastErrorDB = (err) => {
@@ -10,6 +11,8 @@ const handleDuplicateFieldsDB = (err) => {
 	console.log(value);
 
 	const message = `Duplicate field value: ${value}. Please use another value!`;
+	logger.error(new Error(message));
+
 	return new AppError(message, 400);
 };
 const handleValidationErrorDB = (err) => {
@@ -17,14 +20,22 @@ const handleValidationErrorDB = (err) => {
 
 	console.log("handleValidationErrorDB ", errors);
 	const message = `Invalid input data. ${errors.join(". ")}`;
+	logger.error(new Error(message));
+
 	return new AppError(message, 400);
 };
 
-const handleJWTError = () =>
-	new AppError("Invalid Token Please login again .", 401);
+const handleJWTError = () => {
+	logger.error(new Error("Invalid Token Please login again"));
 
-const handleTokenExpiredError = () =>
+	new AppError("Invalid Token Please login again .", 401);
+};
+
+const handleTokenExpiredError = () => {
+	logger.error(new Error("The Token is Expired. "));
+
 	new AppError("The Token is Expired. ", 401);
+};
 
 const handleMulterError = () => new AppError("Too many files uploaded . ", 401);
 
@@ -53,6 +64,8 @@ const sendErrorProd = (err, res) => {
 	// Log to console for dev
 	console.log("The Error Log is ", err);
 	// if the err is not from the above this will excute
+	logger.error(new Error("Server Error , Server Error "));
+
 	res.status(error.statusCode || 500).json({
 		success: false,
 		error: error.message || "Server Error",

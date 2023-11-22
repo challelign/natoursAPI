@@ -5,7 +5,7 @@ const User = require("./../models/userModel");
 const sendEmail = require("../utils/email");
 const catchAsync = require("./../utils/catchAsync");
 const jwt = require("jsonwebtoken");
-
+const logger = require("../logger");
 const signToken = (id) => {
 	return jwt.sign({ id: id }, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_EXPIRES_IN,
@@ -32,6 +32,8 @@ const createSendToken = (user, statusCode, res) => {
 
 	// remove the password from the output
 	user.password = undefined;
+	logger.info(new Error("success , User Create Successfully "));
+
 	res.status(statusCode).json({
 		status: "success",
 		token,
@@ -45,6 +47,8 @@ exports.signup = catchAsync(async (req, res, next) => {
 	const emailExit = await User.findOne({ email: req.body.email });
 
 	if (emailExit) {
+		logger.error(new Error("Please User Other Email , Email address exists!"));
+
 		return next(
 			new AppError("Please User Other Email , Email address exists!", 404)
 		);
@@ -152,6 +156,10 @@ exports.protect = catchAsync(async (req, res, next) => {
 	}
 
 	if (!token) {
+		logger.error(
+			new Error("You are not logged in! Please log in to get access.")
+		);
+
 		return next(
 			new AppError("You are not logged in! Please log in to get access.", 401)
 		);
