@@ -7,7 +7,11 @@ import {
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 // import { PAGE_SIZE } from "../utils/constants";
-
+import Pagination from "@mui/material/Pagination";
+import PaginationItem from "@mui/material/PaginationItem";
+import Stack from "@mui/material/Stack";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 const StyledPagination = styled.div`
 	width: 100%;
 	display: flex;
@@ -64,7 +68,7 @@ const PaginationButton = styled.button`
 	}
 `;
 const PAGE_SIZE = 6;
-function Pagination({ count }) {
+function PaginationRange({ count }) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const currentPage = !searchParams.get("page")
 		? 1
@@ -95,14 +99,22 @@ function Pagination({ count }) {
 		setSearchParams(searchParams);
 	}
 	function goToPage(currentPage) {
+		console.log(currentPage);
 		searchParams.set("page", currentPage);
 		setSearchParams(searchParams);
 	}
+
+	const handleChange = (event, value) => {
+		event.preventDefault();
+		if (value <= pageCount && value > 0) {
+			// console.log(event);
+			console.log(value);
+			searchParams.set("page", value);
+			setSearchParams(searchParams);
+		}
+	};
 	// Generate an array of page numbers
-	const pageNumbers = [];
-	for (let i = 1; i <= pageCount; i++) {
-		pageNumbers.push(i);
-	}
+
 	if (pageCount <= 1) return null;
 
 	return (
@@ -117,7 +129,7 @@ function Pagination({ count }) {
 			</P>
 
 			<Buttons>
-				<PaginationButton onClick={firstPage} disabled={currentPage === 1}>
+				{/* <PaginationButton onClick={firstPage} disabled={currentPage === 1}>
 					<HiChevronDoubleLeft />
 					<span>First</span>
 				</PaginationButton>
@@ -138,31 +150,86 @@ function Pagination({ count }) {
 					<span>Last</span>
 					<HiChevronDoubleRight />
 				</PaginationButton>
-			</Buttons>
-			{/* New code: Display page numbers */}
-			<PaginationButton onClick={firstPage} disabled={currentPage === 1}>
-				<HiChevronDoubleLeft />
-				<span>First</span>
-			</PaginationButton>
-
-			{/* <PaginationButton> */}
-			{pageNumbers.map((pageNumber) => (
-				<PaginationButton
-					key={pageNumber}
-					onClick={() => goToPage(pageNumber)}
-					disabled={currentPage === pageNumber}
-					active={currentPage === pageNumber}
-				>
-					<span>{pageNumber}</span>
+				 */}
+				<PaginationButton onClick={firstPage} disabled={currentPage === 1}>
+					<HiChevronDoubleLeft />
+					<span>First</span>
 				</PaginationButton>
-			))}
-			<PaginationButton onClick={lastPage} disabled={currentPage === pageCount}>
-				<span>Last</span>
-				<HiChevronDoubleRight />
-			</PaginationButton>
-			{/* </PaginationButton> */}
+
+				<Pagination
+					count={pageCount}
+					page={currentPage}
+					onChange={handleChange}
+					sx={{
+						".MuiPagination-root": {
+							backgroundColor: "#f5f5f5",
+						},
+						".MuiPagination-button": {
+							padding: "8px 12px",
+						},
+						".css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root": {
+							fontSize: "16px",
+						},
+
+						".MuiPaginationItem-circular": {
+							color: "#4f46e5",
+						},
+						".MuiPaginationItem-page": {
+							"&.Mui-selected.Mui-disabled": {
+								pointerEvents: "none",
+								// opacity: 0.5,
+								color: "white",
+								backgroundColor: "#4f46e5", // Set the color to red
+							},
+						},
+						".css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected":
+							{
+								backgroundColor: "#4f46e5",
+								fontSize: "16px",
+								color: "white",
+							},
+						".css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root:hover": {
+							backgroundColor: "#4f46e5",
+							color: "white",
+							cursor: "pointer",
+						},
+					}}
+					renderItem={(item) => {
+						if (item.type === "previous") {
+							return (
+								<PaginationItem
+									{...item}
+									disabled={currentPage === 1} // Disable the previous button when on the first page
+								/>
+							);
+						}
+						if (item.type === "next") {
+							return (
+								<PaginationItem
+									{...item}
+									disabled={currentPage === pageCount} // Disable the next button when on the last page
+								/>
+							);
+						}
+						return (
+							<PaginationItem
+								{...item}
+								disabled={item.page === currentPage} // Disable the active button
+							/>
+						);
+					}}
+				/>
+
+				<PaginationButton
+					onClick={lastPage}
+					disabled={currentPage === pageCount}
+				>
+					<span>Last</span>
+					<HiChevronDoubleRight />
+				</PaginationButton>
+			</Buttons>
 		</StyledPagination>
 	);
 }
 
-export default Pagination;
+export default PaginationRange;

@@ -2,25 +2,45 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import api from "./api";
 
-// const api = axios.create({
-// 	baseURL: `http://localhost:3008/api/v1/`,
-// 	// headers: {
-// 	// 	Authorization: `Bearer ${Cookies.get("jwtToken")}`,
-// 	// },
-// });
+const PAGE_SIZE = 6;
+export const getTours = async (
+	page
 
-export const getTours = async (page) => {
-	const { data, error } = await api.get(`/tours/?limit=6&page=${page}`);
+	// searchQuery
+) => {
+	// console.log(searchQuery);
+	// if (searchQuery) {
+	// 	page = 1;
+	// }
+	// const { data, error } = await api.get(
+	// 	`/tours/?limit=6&page=${page}&search=${searchQuery}`
+	// );
+
+	// console.log(data);
+	// const filterGenre = "easy";
+	// console.log(filterGenre);
+	const { data, error } = await api.get(`/tours/?limit=6&page=${page} `);
 	if (error) {
 		console.error("getTours", error);
 		throw new Error("Products Could not be loaded");
 	}
 	console.log(data);
-	console.log(data.totalCount);
+	// console.log(data.totalCount);
 	return data;
 	// return {
 	// 	data: data.data.data,
 	// };
+};
+
+export const getToursSearchAPI = async (page, searchQuery) => {
+	// const { data, error } = await api.get(`/tours/search/?search=${searchQuery}`);
+	// console.log(page);
+	const data = await api.get(
+		`/tours/search/?limit=${PAGE_SIZE}&page=${page}&search=${searchQuery}`
+	);
+	const totalPages = Math.ceil(data?.data?.totalCountSearch / PAGE_SIZE);
+	// console.log(totalPages);
+	return { data, totalPages };
 };
 export const getToursUsingId = async (id) => {
 	const { data, error } = await api.get(`/tours/${id}`);

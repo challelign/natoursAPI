@@ -3,7 +3,6 @@ class APIFeatures {
 		this.query = query; // the mongo query
 		this.queryString = queryString; // experess query coming from the route
 	}
-
 	filter() {
 		// 1. Build the query
 		const queryObj = { ...this.queryString };
@@ -17,30 +16,44 @@ class APIFeatures {
 		return this;
 	}
 
-	filter2() {
-		// 1. Build the query
-		const queryObj = { ...this.queryString };
-		const excludedField = ["page", "limit", "sort", "fields", "search"]; // Add "search" to the excluded fields
-		excludedField.forEach((el) => delete queryObj[el]);
+	// filter() {
+	// 	// 1. Build the query
+	// 	const queryObj = { ...this.queryString };
+	// 	const excludedFields = ["page", "limit", "sort", "fields", "search"];
+	// 	excludedFields.forEach((el) => delete queryObj[el]);
 
-		// 2. Advanced filtering
-		let queryStr = JSON.stringify(queryObj);
-		queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-		this.query.find(JSON.parse(queryStr));
+	// 	// 2) Advanced filtering
+	// 	let queryStr = JSON.stringify(queryObj);
+	// 	queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-		// 3. Search functionality
+	// 	// 3) Search functionality
+	// 	if (this.queryString.search) {
+	// 		const searchRegex = new RegExp(this.queryString.search, "i");
+	// 		const parsedQuery = JSON.parse(queryStr);
+
+	// 		if (Object.keys(parsedQuery).length > 0) {
+	// 			if ("$or" in parsedQuery) {
+	// 				parsedQuery.$or.push({ name: searchRegex });
+	// 			} else {
+	// 				parsedQuery.$or = [{ name: searchRegex }];
+	// 			}
+	// 		} else {
+	// 			parsedQuery.$or = [{ name: searchRegex }];
+	// 		}
+
+	// 		queryStr = JSON.stringify(parsedQuery);
+	// 	}
+
+	// 	this.query.find(JSON.parse(queryStr));
+	// 	return this;
+	// }
+	search() {
 		if (this.queryString.search) {
-			const searchQuery = {
-				// Modify this based on your search requirements
-				$or: [
-					{ name: { $regex: this.queryString.search, $options: "i" } }, // Case-insensitive search for field1
-					{ difficulty: { $regex: this.queryString.search, $options: "i" } }, // Case-insensitive search for field2
-					// Add more fields as needed
-				],
-			};
-			this.query.find(searchQuery);
+			const searchRegex = new RegExp(this.queryString.search, "i");
+			this.query = this.query.find({
+				$or: [{ field1: searchRegex }, { field2: searchRegex }], // Replace field1 and field2 with the actual fields you want to search on
+			});
 		}
-
 		return this;
 	}
 	sort() {

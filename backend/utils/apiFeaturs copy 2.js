@@ -7,19 +7,6 @@ class APIFeatures {
 	filter() {
 		// 1. Build the query
 		const queryObj = { ...this.queryString };
-		const exculdedField = ["page", "limit", "sort", "fields"];
-		exculdedField.forEach((el) => delete queryObj[el]);
-
-		// 2) Advanced filtering
-		let queryStr = JSON.stringify(queryObj);
-		queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // g helps to loop and check match for all
-		this.query.find(JSON.parse(queryStr));
-		return this;
-	}
-
-	filter2() {
-		// 1. Build the query
-		const queryObj = { ...this.queryString };
 		const excludedField = ["page", "limit", "sort", "fields", "search"]; // Add "search" to the excluded fields
 		excludedField.forEach((el) => delete queryObj[el]);
 
@@ -65,13 +52,44 @@ class APIFeatures {
 		return this;
 	}
 
-	paginate() {
+	async paginate() {
+		const page = this.queryString.page * 1 || 1;
+		const limit = this.queryString.limit * 1 || 100; // loaded data for the first time from the whole data
+		const skip = (page - 1) * limit;
+		this.query = this.query.skip(skip).limit(limit);
+
+		// Add previous and next page information
+		const numDocuments = await this.query.model.countDocuments(); // Get the total number of documents for the query
+		const totalPages = Math.ceil(numDocuments / limit);
+
+		const pagination = {};
+
+		if (page > 1) {
+			pagination.previous = {
+				page: page - 1,
+				limit: limit,
+			};
+		}
+
+		if (page < totalPages) {
+			pagination.next = {
+				page: page + 1,
+				limit: limit,
+			};
+		}
+
+		return {
+			query: this.query,
+			pagination: pagination,
+		};
+	}
+	/* paginate() {
 		const page = this.queryString.page * 1 || 1;
 		const limit = this.queryString.limit * 1 || 100; // loaded data for first time from the whole data
 		const skip = (page - 1) * limit;
 		this.query = this.query.skip(skip).limit(limit);
 
 		return this;
-	}
+	} */
 }
 module.exports = APIFeatures;

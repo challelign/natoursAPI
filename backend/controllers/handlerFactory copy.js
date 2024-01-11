@@ -73,91 +73,55 @@ exports.getAll = (Model) =>
 			filter = { tour: req.params.tourId };
 		}
 
-		// const page = req.query.page && req.query.page > 0 ? req.query.page * 1 : 1; // Current page number (default to 1 if not provided or invalid)
-
 		const features = new APIFeatures(Model.find(filter), req.query)
 			.filter()
 			.sort()
 			.limitFields();
 		// .paginate();
+		// const doc = await features.query;
+		// Execute the modified queries
+		// Execute the modified queries
 		const result = await features.paginate();
-
 		const doc = await result.query;
-		console.log("document is of doc =>", doc);
-		console.log("document is of doc.length =>", doc.length);
-		// console.log("Current Page:", result);
-		console.log("Current Page:", result.queryString["page"]);
-		//  queryString: { limit: '60', search: 'the ', page: '1' }
-
 		res.status(200).json({
 			status: "success",
-			totalRes: doc.length,
-			totalCount: countAll.length,
+			// totalRes: doc.length,
+			// totalCount: countAll.length,
 			data: {
-				totalRes: doc.length,
+				// total: doc.length,
+				pagination: result.pagination,
+
 				data: doc,
 			},
 		});
 	});
-// exports.getAllToursSearch = (Model) =>
-// 	catchAsync(async (req, res, next) => {
-// 		// for ratting get all
-// 		// To allow for nested GET reviews on Tour (hack)
-
-// 		// to count all the data in the model
-// 		// const featuresCount = new APIFeatures(Model.find(), req.query);
-// 		// const countAll = await featuresCount.query;
-
-// 		let filter = {};
-// 		if (req.params.tourId) {
-// 			filter = { tour: req.params.tourId };
-// 		}
-
-// 		const features = new APIFeatures(Model.find(filter), req.query)
-// 			.filter2()
-// 			.sort()
-// 			.limitFields()
-// 			.paginate();
-// 		const doc = await features.query;
-// 		res.status(200).json({
-// 			status: "success",
-// 			totalRes: doc.length,
-// 			data: {
-// 				totalRes: doc.length,
-// 				doc,
-// 			},
-// 		});
-// 	});
-exports.getAllToursSearch = (Model) =>
+/* exports.getAll = (Model) =>
 	catchAsync(async (req, res, next) => {
 		// for ratting get all
 		// To allow for nested GET reviews on Tour (hack)
+
+		// to count all the data in the model
+		const featuresCount = new APIFeatures(Model.find(), req.query);
+		const countAll = await featuresCount.query;
 
 		let filter = {};
 		if (req.params.tourId) {
 			filter = { tour: req.params.tourId };
 		}
 
-		const features2 = new APIFeatures(Model.find(filter), req.query).filter2();
-
-		// Get the total count before pagination
-		const totalCount = await features2.query.countDocuments();
-
 		const features = new APIFeatures(Model.find(filter), req.query)
-			.filter2()
+			.filter()
 			.sort()
 			.limitFields()
 			.paginate();
-
 		const doc = await features.query;
-
 		res.status(200).json({
 			status: "success",
 			totalRes: doc.length,
-			totalCountSearch: totalCount,
+			totalCount: countAll.length,
 			data: {
-				totalCountSearch: doc.length,
-				doc,
+				data: doc,
 			},
 		});
 	});
+ */

@@ -28,6 +28,8 @@ const router = express.Router();
 
 router.use("/:tourId/reviews", reviewRouter);
 
+router.route("/All-Tours").get(tourController.getAllToursCustomNew);
+
 router
 	.route("/top-5-cheaps")
 	.get(tourController.aliasTopTours, tourController.getAllTours);
@@ -39,6 +41,10 @@ router
 router.route("/distances/:latlng/unit/:unit").get(tourController.getDistances);
 
 router.route("/:slug/title").get(tourController.getTourUsingSlug);
+
+router
+	.route("/search")
+	.get(authController.protect, tourController.getAllToursSearchResult);
 
 router
 	.route("/")

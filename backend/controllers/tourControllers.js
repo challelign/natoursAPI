@@ -117,6 +117,7 @@ exports.aliasTopTours = (req, res, next) => {
 
 // check the older version comments in do not understand
 exports.getAllTours = factory.getAll(Tour);
+exports.getAllToursSearchResult = factory.getAllToursSearch(Tour);
 
 exports.getTour = factory.getOne(Tour, { path: "reviews" });
 exports.createTour = factory.createOne(Tour);
@@ -213,6 +214,52 @@ exports.getTourUsingSlug = catchAsync(async (req, res, next) => {
 	});
 });
 
+exports.getAllToursCustomNew = catchAsync(async (req, res) => {
+	try {
+		// Filtering
+		const queryObj = { ...req.query };
+		const excludeFields = ["page", "sort", "limit", "fields"];
+		excludeFields.forEach((el) => delete queryObj[el]);
+		let queryStr = JSON.stringify(queryObj);
+		queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+		let query = Tour.find(JSON.parse(queryStr));
+
+		// Sorting
+
+		if (req.query.sort) {
+			const sortBy = req.query.sort.split(",").join(" ");
+			query = query.sort(sortBy);
+		} else {
+			query = query.sort("-createdAt");
+		}
+
+		// limiting the fields
+
+		if (req.query.fields) {
+			const fields = req.query.fields.split(",").join(" ");
+			query = query.select(fields);
+		} else {
+			query = query.select("-__v");
+		}
+
+		// pagination
+
+		const page = parseInt(req.query.page);
+		const limit = parseInt(req.query.limit);
+		const skip = (page - 1) * limit;
+		query = query.skip(skip).limit(limit);
+		const productCount = await Tour.countDocuments();
+
+		if (req.query.page) {
+			if (skip >= productCount) throw new Error("This Page does not exists");
+		}
+		const product = await query;
+		res.json({ productCount, product });
+	} catch (error) {
+		throw new Error(error);
+	}
+});
 /* exports.getTour = catchAsync(async (req, res, next) => {
 	const tour = await Tour.findById(req.params.id).populate("reviews");
 	if (!tour) {
